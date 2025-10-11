@@ -1,0 +1,226 @@
+trigger:
+  branches:
+    include:
+      - development
+      - production
+ 
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  runSecurityScan: true
+ 
+stages:
+# Build Stage
+- stage: BuildToDevelopment
+  displayName: "Build Docker Images"
+  variables:
+    - group: DevelopmentVariables # Load DevelopmentVariables for the Build Stage
+  condition: or(eq(variables['Build.SourceBranchName'], 'development'), eq(variables['Build.Reason'], 'Manual'))
+  jobs:
+  - job: BuildJob
+    displayName: "Build and Push Docker Image"
+    steps:
+    # Step 1: Checkout code
+    - checkout: self
+      persistCredentials: true
+      clean: true
+      fetchDepth: 1
+      displayName: "Checkout $(Build.SourceBranchName)"
+    
+    - script: |
+        echo "Fetching latest changes for $(Build.SourceBranchName)"
+        git fetch --all
+        git checkout $(Build.SourceBranchName)
+        git pull origin $(Build.SourceBranchName)
+      displayName: "Switch to $(Build.SourceBranchName)"
+ 
+    # Step 2: Generate .env File
+    - script: |
+        echo "NEXT_PUBLIC_APP_NAME=$(appName)" > .env
+        echo "NEXT_PUBLIC_FRONT_URL=$(frontendURL)" >> .env
+        echo "NEXT_PUBLIC_BACKEND_URL=$(backendURL)" >> .env
+        echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=$(googleClientID)" >> .env
+        echo "NEXT_PUBLIC_API_URL=$(apiURL)" >> .env
+        echo "NEXT_PUBLIC_APP_ENV=$(appEnv)" >> .env
+        echo "NEXT_PUBLIC_SOCKET_URL=$(socketURL)" >> .env
+      displayName: "Generate .env File"
+    
+    - script: ls -la $(Build.SourcesDirectory)
+      displayName: "Check Directory Contents"
+
+    # ✅ Initialize CodeQL for Security Scanning
+    - task: AdvancedSecurity-Codeql-Init@1
+      displayName: "Initialize CodeQL"
+      condition: eq(variables['runSecurityScan'], 'true')
+      inputs:
+        languages: "javascript"
+        enableAutomaticCodeQLInstall: true
+
+    # ✅ Dependency Scanning (Software Composition Analysis)
+    - task: AdvancedSecurity-Dependency-Scanning@1
+      condition: eq(variables['runSecurityScan'], 'true')
+      displayName: "Run Dependency Scanning"
+
+    # ✅ Run CodeQL Security Analysis
+    - task: AdvancedSecurity-Codeql-Analyze@1
+      condition: eq(variables['runSecurityScan'], 'true')
+      displayName: "Run CodeQL Security Analysis" 
+    
+    # 🔹 Login to ACR
+    - task: Docker@2
+      displayName: "Login to ACR"
+      condition: or(eq(variables['Build.SourceBranchName'], 'development'), eq(variables['Build.Reason'], 'Manual')) # Apply condition for development
+      inputs:
+        command: login
+        containerRegistry: 'covertlydevacrconnection'
+ 
+    # Step 3: Build and Push Docker Image for Development
+    - task: Docker@2
+      condition: or(eq(variables['Build.SourceBranchName'], 'development'), eq(variables['Build.Reason'], 'Manual')) # Apply condition for development
+      displayName: 'Build and Push Development Docker Image'
+      inputs:
+        containerRegistry: covertlydevacrconnection # Development ACR service connection
+        repository: covertlyaifrontend
+        command: buildAndPush
+        Dockerfile: $(Build.SourcesDirectory)/Dockerfile
+        tags: |
+          $(Build.BuildId)
+        buildContext: $(Build.SourcesDirectory)
+        customOptions: '--env-file .env' # Use the generated .env file
+
+- stage: BuildToProduction
+  displayName: "Build Docker Images"
+  variables:
+    - group: ProductionVariables # Load DevelopmentVariables for the Build Stage
+  condition: or(eq(variables['Build.SourceBranchName'], 'production'), eq(variables['Build.Reason'], 'Manual'))
+  jobs:
+  - job: BuildJob
+    displayName: "Build and Push Docker Image"
+    steps:
+    # Step 1: Checkout code
+    - checkout: self
+      persistCredentials: true
+      clean: true
+      fetchDepth: 1
+      displayName: "Checkout $(Build.SourceBranchName)"
+    
+    - script: |
+        echo "Fetching latest changes for $(Build.SourceBranchName)"
+        git fetch --all
+        git checkout $(Build.SourceBranchName)
+        git pull origin $(Build.SourceBranchName)
+      displayName: "Switch to $(Build.SourceBranchName)"
+ 
+    # Step 2: Generate .env File
+    - script: |
+        echo "NEXT_PUBLIC_APP_NAME=$(appName)" > .env
+        echo "NEXT_PUBLIC_FRONT_URL=$(frontendURL)" >> .env
+        echo "NEXT_PUBLIC_BACKEND_URL=$(backendURL)" >> .env
+        echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=$(googleClientID)" >> .env
+        echo "NEXT_PUBLIC_API_URL=$(apiURL)" >> .env
+        echo "NEXT_PUBLIC_APP_ENV=$(appEnv)" >> .env
+        echo "NEXT_PUBLIC_SOCKET_URL=$(socketURL)" >> .env
+      displayName: "Generate .env File"
+    
+    - script: ls -la $(Build.SourcesDirectory)
+      displayName: "Check Directory Contents" 
+    
+    # ✅ Initialize CodeQL for Security Scanning
+    - task: AdvancedSecurity-Codeql-Init@1
+      displayName: "Initialize CodeQL"
+      condition: eq(variables['runSecurityScan'], 'true')
+      inputs:
+        languages: "javascript"
+        enableAutomaticCodeQLInstall: true
+
+    # ✅ Dependency Scanning (Software Composition Analysis)
+    - task: AdvancedSecurity-Dependency-Scanning@1
+      condition: eq(variables['runSecurityScan'], 'true')
+      displayName: "Run Dependency Scanning"
+
+    # ✅ Run CodeQL Security Analysis
+    - task: AdvancedSecurity-Codeql-Analyze@1
+      condition: eq(variables['runSecurityScan'], 'true')
+      displayName: "Run CodeQL Security Analysis"
+    
+    - task: Docker@2
+      displayName: "Login to ACR"
+      condition: or(eq(variables['Build.SourceBranchName'], 'production'), eq(variables['Build.Reason'], 'Manual')) # Apply condition for production
+      inputs:
+        command: login
+        containerRegistry: 'covertlyprodacrconnection'
+ 
+    # Step 4: Build and Push Docker Image for Production
+    - task: Docker@2
+      condition: or(eq(variables['Build.SourceBranchName'], 'production'), eq(variables['Build.Reason'], 'Manual')) # Apply condition for production
+      displayName: 'Build and Push Production Docker Image'
+      inputs:
+        containerRegistry: covertlyprodacrconnection # Production ACR service connection
+        repository: covertlyaifrontend
+        command: buildAndPush
+        Dockerfile: $(Build.SourcesDirectory)/Dockerfile
+        tags: |
+          $(Build.BuildId)
+        buildContext: $(Build.SourcesDirectory)
+        customOptions: '--env-file .env' # Use the generated .env file
+
+# Development Deployment Stage
+- stage: DeployToDevelopment
+  displayName: "Deploy to Development Environment"
+  dependsOn: BuildToDevelopment # Ensure Build Stage completes first
+  condition: eq(variables['Build.SourceBranchName'], 'development')
+  variables:
+    - group: DevelopmentVariables # Explicitly load DevelopmentVariables
+  jobs:
+  - job: Deploy
+    displayName: "Deploy to Development"
+    steps:
+    # Step 1: Generate .env file from Variable Group
+    - script: |
+        echo "NEXT_PUBLIC_APP_NAME=$(appName)" > .env
+        echo "NEXT_PUBLIC_FRONT_URL=$(frontendURL)" >> .env
+        echo "NEXT_PUBLIC_BACKEND_URL=$(backendURL)" >> .env
+        echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=$(googleClientID)" >> .env
+        echo "NEXT_PUBLIC_API_URL=$(apiURL)" >> .env
+        echo "NEXT_PUBLIC_APP_ENV=$(appEnv)" >> .env
+        echo "NEXT_PUBLIC_SOCKET_URL=$(socketURL)" >> .env
+      displayName: "Generate .env file for Development"
+ 
+    # Step 2: Deploy Docker Image to Azure Web App
+    - task: AzureWebAppContainer@1
+      displayName: "Deploy Docker Image to Development App Service"
+      inputs:
+        azureSubscription: covertlydevsubscription
+        appName: covertly-dev-frontend
+        containers: covertlydevacr.azurecr.io/covertlyaifrontend:$(Build.BuildId)
+ 
+# Production Deployment Stage
+- stage: DeployToProduction
+  displayName: "Deploy to Production Environment"
+  dependsOn: BuildToProduction # Ensure Build Stage completes first
+  condition: eq(variables['Build.SourceBranchName'], 'production')
+  variables:
+    - group: ProductionVariables # Explicitly load ProductionVariables
+  jobs:
+  - job: Deploy
+    displayName: "Deploy to Production"
+    steps:
+    # Step 1: Generate .env file from Variable Group
+    - script: |
+        echo "NEXT_PUBLIC_APP_NAME=$(appName)" > .env
+        echo "NEXT_PUBLIC_FRONT_URL=$(frontendURL)" >> .env
+        echo "NEXT_PUBLIC_BACKEND_URL=$(backendURL)" >> .env
+        echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=$(googleClientID)" >> .env
+        echo "NEXT_PUBLIC_API_URL=$(apiURL)" >> .env
+        echo "NEXT_PUBLIC_APP_ENV=$(appEnv)" >> .env
+        echo "NEXT_PUBLIC_SOCKET_URL=$(socketURL)" >> .env
+      displayName: "Generate .env file for Production"
+ 
+    # Step 2: Deploy Docker Image to Azure Web App
+    - task: AzureWebAppContainer@1
+      displayName: "Deploy Docker Image to Production App Service"
+      inputs:
+        azureSubscription: covertlyprodsubscription
+        appName: covertly-prod-frontend
+        containers: covertlyprodacr.azurecr.io/covertlyaifrontend:$(Build.BuildId)

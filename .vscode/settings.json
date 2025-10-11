@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "covertly",
+        "projectKey": "Covertly_covertly-ai-frontend"
+    }
+}

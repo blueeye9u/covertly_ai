@@ -1,0 +1,29 @@
+stages:
+  - deploy
+deploy Dev-Covertly-FE:
+  stage: deploy
+  tags:
+    - covertly-dev
+  script:
+    - echo "$DEV_ENV" > .env
+    - docker build . -t dev-covertly-fe
+    - docker stop dev-covertly-fe-c && docker rm dev-covertly-fe-c
+    - docker run -d --name dev-covertly-fe-c -p 5001:3000 --restart=always dev-covertly-fe
+  only:
+    - development
+
+deploy Prod-Covertly-FE:
+  stage: deploy
+  tags:
+    - covertly-prod
+  script:
+    - echo "$PROD_ENV" > .env
+    - docker build . -t prod-covertly-fe
+    - docker stop prod-covertly-fe-c && docker rm prod-covertly-fe-c
+    - docker run -d --name prod-covertly-fe-c -p 5002:3000 --restart=always prod-covertly-fe
+  only:
+    - production
+
+
+
+

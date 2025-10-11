@@ -1,0 +1,1 @@
+export const notPaddingArray = ['/login','/signup','onboarding']

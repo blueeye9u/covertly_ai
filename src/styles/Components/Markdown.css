@@ -1,0 +1,162 @@
+.markdown-wrapper {
+  @apply text-base leading-relaxed;
+}
+
+/* Headings */
+.markdown-wrapper h1,
+.markdown-wrapper h2,
+.markdown-wrapper h3,
+.markdown-wrapper h4,
+.markdown-wrapper h5,
+.markdown-wrapper h6 {
+  @apply font-bold text-blackRussian;
+  @apply block;
+  @apply my-4;
+}
+
+/* Lists */
+.markdown-wrapper ul,
+.markdown-wrapper ol {
+  @apply my-4;
+}
+
+.markdown-wrapper ul li,
+.markdown-wrapper ol li {
+  @apply block;
+  @apply mb-2;
+}
+
+/* Strong/Bold text */
+.markdown-wrapper strong {
+  @apply font-bold;
+  @apply inline-block;
+}
+
+/* Paragraphs */
+.markdown-wrapper p {
+  @apply block;
+  @apply mb-4;
+}
+
+/* Links */
+.markdown-wrapper a {
+  @apply text-blue-600;
+  @apply hover:underline;
+}
+
+/* Code blocks */
+.markdown-wrapper pre {
+  @apply bg-blackRussian4 p-4 rounded my-4 whitespace-pre-wrap break-words overflow-x-hidden;
+}
+
+.markdown-wrapper code {
+  @apply font-mono;
+  @apply text-sm;
+}
+
+/* Inline code */
+.markdown-wrapper :not(pre) > code {
+  @apply bg-blackRussian4;
+  @apply px-1;
+  @apply py-0.5;
+  @apply rounded;
+}
+
+/* Blockquotes */
+.markdown-wrapper blockquote {
+  @apply border-l-4;
+  @apply border-blackRussian4;
+  @apply pl-4;
+  @apply my-4;
+  @apply italic;
+}
+
+/* Signature block */
+.signature-block {
+  white-space: pre-wrap;
+  @apply mt-8 block border-t border-blackRussian4 pt-4 !important;
+}
+
+/* Tables */
+.markdown-wrapper table {
+  @apply w-full;
+  @apply border-collapse;
+  @apply my-4;
+}
+
+.markdown-wrapper th,
+.markdown-wrapper td {
+  @apply border;
+  @apply border-blackRussian4;
+  @apply px-4;
+  @apply py-2;
+}
+
+.markdown-wrapper th {
+  @apply bg-blackRussian4;
+}
+
+/* Reset and base styles */
+.markdown-container * {
+  @apply text-base leading-relaxed;
+}
+
+/* Headings */
+.markdown-container h1 {
+  @apply my-4 block text-2xl font-bold !important;
+}
+
+.markdown-container h2 {
+  @apply my-3 block text-xl font-bold !important;
+}
+
+.markdown-container h3 {
+  @apply my-2 block text-lg font-bold !important;
+}
+
+.markdown-container h4 {
+  @apply my-2 block text-base font-bold !important;
+}
+
+/* Lists */
+.markdown-container ul {
+  @apply my-4 ml-6 block list-outside list-disc !important;
+}
+
+.markdown-container ol {
+  @apply my-4 ml-6 block list-outside list-decimal !important;
+}
+
+.markdown-container li {
+  @apply mb-1 ml-4 block !important;
+  display: list-item !important;
+}
+
+/* Paragraphs and text */
+.markdown-container p {
+  @apply mb-4 block !important;
+}
+
+.markdown-container strong {
+  @apply font-bold !important;
+}
+
+/* Code blocks */
+.markdown-container pre {
+  /* Allow tooltips inside code blocks to render outside the <pre> box */
+  @apply my-4 block rounded bg-blackRussian4 whitespace-pre-wrap break-words overflow-visible !important;
+}
+
+.markdown-container code {
+  @apply font-mono;
+}
+
+/* Blockquotes */
+.markdown-container blockquote {
+  @apply my-4 block border-l-4 border-blackRussian4 pl-4 italic !important;
+}
+
+/* Links */
+.markdown-container a {
+  @apply text-blue-600 hover:underline;
+}

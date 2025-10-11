@@ -1,0 +1,6 @@
+export const OAUTH_PROVIDERS = {
+    FACEBOOK: "FACEBOOK",
+    GOOGLE: "GOOGLE",
+    APPLE: "APPLE",
+    OUTLOOK: "OUTLOOK",
+}

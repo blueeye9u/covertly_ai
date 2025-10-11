@@ -1,0 +1,65 @@
+version: '4.8'
+
+services:
+  frontend:
+    build: ./
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_APP_ENV: "development"
+      NEXT_PUBLIC_FRONT_URL: "http://localhost:3000"
+      NEXT_PUBLIC_BACKEND_URL: "http://backend:5000"
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: "${NEXT_PUBLIC_GOOGLE_CLIENT_ID}"
+      NEXT_PUBLIC_API_URL: "http://backend:5000/api/v1"
+    depends_on:
+      - backend
+    networks:
+      - node-network
+
+  backend:
+    build: ../covertly-backend-review
+    ports:
+      - "5000:5000"
+    environment:
+      MONGODB_URI: "mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongodb:27017/test"
+    depends_on:
+      - mongodb
+    networks:
+      - node-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - dbdata:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_USER}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+    networks:
+      - node-network
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "28081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: "${MONGO_EXPRESS_USER}"
+      ME_CONFIG_BASICAUTH_PASSWORD: "${MONGO_EXPRESS_PASSWORD}"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_USER}"
+      ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_PASSWORD}"
+      ME_CONFIG_MONGODB_URL: "mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongodb:27017/"
+    depends_on:
+      - mongodb
+    networks:
+      - node-network
+
+volumes:
+  dbdata:
+
+networks:
+  node-network:
+    driver: bridge
