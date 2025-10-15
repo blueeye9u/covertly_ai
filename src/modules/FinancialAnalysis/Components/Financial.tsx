@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { v4 as uuidv4 } from "uuid";
 import { useTheme } from '../../../context/themeContext';
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 const data=[
     {
@@ -100,13 +100,56 @@ const title=[
 
 const Financial = () => {
     const { isDarkMode} = useTheme();
+    const [isMenuExpanded, setIsMenuExpanded] = useState(false);
+    const [isAtBottom, setIsAtBottom] = useState(false);
+    const bottomSentinelRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const rect = bottomSentinelRef.current?.getBoundingClientRect();
+            if (rect) {
+                setIsAtBottom(rect.top <= window.innerHeight);
+            }
+        };
+
+        let observer: IntersectionObserver | null = null;
+        if ('IntersectionObserver' in window && bottomSentinelRef.current) {
+            observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        setIsAtBottom(entry.isIntersecting);
+                    });
+                },
+                {
+                    root: null,
+                    threshold: 0.01,
+                }
+            );
+            observer.observe(bottomSentinelRef.current);
+        } else {
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            handleScroll();
+        }
+
+        return () => {
+            if (observer && bottomSentinelRef.current) {
+                observer.unobserve(bottomSentinelRef.current);
+            }
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    const toggleMenu = () => {
+        setIsMenuExpanded(!isMenuExpanded);
+    };
+
     return (
-        <div className='pb-10 lg:pb-20 xl:pb-[120px] container-landingpage'>
+        <div className='pb-10 lg:pb-20 xl:pb-[120px] container-landingpage md:pb-10 pb-20'>
             <div className='grid sm:custom-grid gap-10'>
                 <div className='p-5 lg:p-10 bg-whiteSmoke dark:bg-[#FFFFFF05] rounded-2xl flex flex-col'>
                     <div className='mb-24'>
                         <h6 className='fs-32 mb-2 dark:text-white'>Overview</h6>
-                        <div className='grid sm:grid-cols-1 lg:grid-cols-2 gap-24'>
+                        <div className='grid sm:grid-cols-1 lg:grid-cols-2 sm:gap-24'>
                             <div className='text-sm dark:text-[#D2D3D4]'>Financial executives handle vast amounts of sensitive financial data daily, including balance sheets, income statements, and cash flow statements. Ensuring the security and confidentiality of this data is paramount, especially when analyzing financial health, making strategic decisions, or preparing reports for stakeholders such as executive leadership, the board of directors, and external regulatory bodies. Traditional AI tools often store user data or lack built-in privacy protections, exposing financial professionals to potential risks of data leaks, compliance violations, or unauthorized access.</div>
                             <div className='text-sm dark:text-[#D2D3D4]'>Covertly AI provides an anonymous AI-powered financial analysis tool designed specifically for professionals who require discretion, security, and efficiency when handling financial data. With auto-redaction of sensitive information and auto-deletion of processed data, Covertly ensures that financial executives can work with AI without compromising confidentiality.</div>
                         </div>
@@ -119,17 +162,17 @@ const Financial = () => {
 
                         <li className='fs-24 font-bold dark:text-white mb-8'>Data Security Risks
                             <div className='block text-base font-light mt-4 text-blackPearl dark:text-manatee'>{"Sensitive financial data, such as profit margins, liabilities, earnings, and cash flow projections, must remain private and secure."}</div>
-                            <div className='block text-base font-light mt-4 text-blackPearl dark:text-manatee'>{"Many AI tools store user queries, creating compliance risks for regulated industries."}</div>
+                            <div className='block text-base font-light text-blackPearl dark:text-manatee'>{"Many AI tools store user queries, creating compliance risks for regulated industries."}</div>
                         </li>
                         
                         <li className='fs-24 font-bold dark:text-white mb-8'>Regulatory Compliance
                             <div className='block text-base font-light mt-4 text-blackPearl dark:text-manatee'>{"Financial executives must adhere to strict data privacy laws, such as the Sarbanes-Oxley Act (SOX), GDPR, and CCPA."}</div>
-                            <div className='block text-base font-light mt-4 text-blackPearl dark:text-manatee'>{"AI solutions must ensure that confidential financial data is not stored or accessible beyond its intended use."}</div>
+                            <div className='block text-base font-light text-blackPearl dark:text-manatee'>{"AI solutions must ensure that confidential financial data is not stored or accessible beyond its intended use."}</div>
                         </li>
                         
                         <li className='fs-24 font-bold dark:text-white mb-8'>Time-Consuming Data Redaction and Manual Processing
                             <div className='block text-base font-light mt-4 text-blackPearl dark:text-manatee'>{"Financial teams often spend hours redacting sensitive information before using AI tools."}</div>
-                            <div className='block text-base font-light mt-4 text-blackPearl dark:text-manatee'>{"Manual analysis is prone to errors and inefficiencies."}</div>
+                            <div className='block text-base font-light text-blackPearl dark:text-manatee'>{"Manual analysis is prone to errors and inefficiencies."}</div>
                         </li>
 
                         <li className='fs-24 font-bold dark:text-white mb-8'>Need for Efficient and Secure AI Assistance
@@ -142,7 +185,7 @@ const Financial = () => {
                             <div className='p-5 lg:p-8 lg:px-6 rounded-xl bg-white dark:bg-[#FFFFFF08] flex flex-col shadow-sm mb-5' key={uuidv4()}>
                                 <Image src={isDarkMode ? "/assets/images/use-cases/1.svg" : "/assets/images/use-cases/1a.svg"} width={96} height={96} alt="how-covertly-solves-image" className='mb-4 text-black dark:text-white'/>
                                 <h5 className='fs-24 mb-3'>Auto-Redaction of Sensitive Information</h5>
-                                <div className='grid sm:grid-cols-1 lg:grid-cols-2 gap-24'>
+                                <div className='grid sm:grid-cols-1 lg:grid-cols-2 sm:gap-24'>
                                     <div className='text-sm dark:text-white'>Automatically detects and redacts sensitive personally identifiable information (PII) such as:
                                         <ul style={{listStyle: "disc", padding: "0 0 0 20px"}}>
                                             <li className="text-black dark:text-white text-sm">
@@ -218,7 +261,7 @@ const Financial = () => {
                     <div className='grid sm:grid-cols-2 gap-6 mb-24'> 
                         {
                             title.map((item,i)=>(
-                                <div key={uuidv4()} className='flex lg:flex-row flex-col gap-2 md:gap-4 lg:gap-2 lg:items-center border border-[#FFFFFF05] rounded-[16px]'>
+                                <div key={uuidv4()} className='flex lg:flex-row gap-2 md:gap-4 lg:gap-2 lg:items-center border border-[#FFFFFF05] rounded-[16px]'>
                                     <Image src={isDarkMode ? item.img : item.img1 } alt={item.img} width={72} height={72} className='mb-2' />
                                     <div>
                                         <p className='dark:text-white fs-24 font-semibold mb-2'>{item.title}</p>
@@ -232,10 +275,10 @@ const Financial = () => {
                         <h6 className='fs-32 mb-2 dark:text-white'>Why Covertly AI Is the Best Choice for Financial Executives</h6>
                         <div style={{position: "relative"}}>
                             <Image src={"/assets/images/use-cases/25.png"} alt="wolf" width={84} height={192} style={{position: "absolute", top: "-20px"}} />
-                            <div className='grid sm:grid-cols-1 lg:grid-cols-2 gap-24 mb-5 pt-24'>
+                            <div className='grid sm:grid-cols-1 lg:grid-cols-2 sm:gap-24 mb-5 pt-24'>
                                 <div className='text-sm dark:text-[#D2D3D4]'>
-                                    <p className='mb-5'>Covertly Al is not just an Al tool-it is the most secure way for financial executives to analyze and interpret their financial statements without the risk of exposing sensitive data. This means you get the power of Al-driven financial insights without a trace.</p>
-                                    <p>In today's financial landscape, data security is non-negotiable. Al-driven insights should empower, not expose.</p>
+                                    <p className='mb-2'>Covertly Al is not just an Al tool-it is the most secure way for financial executives to analyze and interpret their financial statements without the risk of exposing sensitive data. This means you get the power of Al-driven financial insights without a trace.</p>
+                                    <p className='mb-2'>In today's financial landscape, data security is non-negotiable. Al-driven insights should empower, not expose.</p>
                                 </div>
                                 <div className='text-sm dark:text-[#D2D3D4]'>Covertly Al gives financial executives the ability to analyze, forecast, and strategize-all while ensuring complete privacy and compliance. Your financial data is valuable. Covertly Al ensures it stays secure.</div>
                             </div>
@@ -245,7 +288,7 @@ const Financial = () => {
                     </div>
                 </div>
                 
-                <div className='rounded-2xl flex flex-col'>
+                <div className='hidden md:block rounded-2xl flex flex-col'>
                     <div className='use-cases-profile' style={{ backgroundImage: 'url(/assets/images/use-cases/bg1.png)'}} >
                         <div style={{display: "flex", alignItems: "end", gap: "15px"}}>
                             <Image src={"/assets/images/use-cases/13.png"} alt="wolf" width={100} height={100} />
@@ -277,6 +320,87 @@ const Financial = () => {
                         </ul>
                     </div>
                 </div>
+
+                <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
+                    isAtBottom ? 'relative' : 'fixed'
+                }`}>
+                    <div 
+                        className={`bg-gradient-to-r from-[#30C5D2] to-[#471069] h-16 flex items-center justify-center cursor-pointer transition-all duration-300 ${
+                            isMenuExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                        }`}
+                        onClick={toggleMenu}
+                    >
+                        <div className="flex items-center gap-2 text-white">
+                            <span className="text-sm font-medium">Menu</span>
+                            <svg 
+                                className="w-5 h-5 transition-transform duration-300 rotate-180" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div className={`bg-gradient-to-r from-[#30C5D2] to-[#471069] transition-all duration-300 ease-in-out ${
+                        isMenuExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+                    }`}>
+                        <div className="h-80 bg-white dark:bg-[#FFFFFF08] rounded-t-2xl p-4 overflow-y-auto">
+                            <div className='use-cases-profile mb-4' style={{ backgroundImage: 'url(/assets/images/use-cases/bg1.png)'}} >
+                                <div style={{display: "flex", alignItems: "end", gap: "15px"}}>
+                                    <Image src={"/assets/images/use-cases/13.png"} alt="wolf" width={80} height={80} />
+                                    <Image src={"/assets/images/use-cases/linkedin-blue.png"} alt="Linkedin-Blue" width={24} height={24} />
+                                </div>
+                                <p className='dark:text-white fs-20 font-semibold'>Tamás Hám-Szabó</p>
+                                <p className='dark:text-lavender text-xs fs-14 mb-2'>Founder of SAAS First - the Best AI and Data-Driven Customer Engagement Tool</p>
+                                <hr />
+                                <p className='dark:text-lavender text-xs fs-14 mt-2'>With 11 years in SaaS, I've built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let's connect if you share the same drive for success!</p>
+                            </div>
+
+                            <div className='use-cases-profile mb-4' style={{ backgroundImage: 'url(/assets/images/use-cases/bg2.png)'}} >
+                                <p className='dark:text-lavender text-xs fs-14 mb-2'>Share with your community!</p>
+                                <div style={{display: "flex", alignItems: "end", gap: "15px"}}>
+                                    <Image src={"/assets/images/use-cases/facebook.png"} alt="facebook" width={24} height={24} />
+                                    <Image src={"/assets/images/use-cases/twitter.png"} alt="twitter" width={24} height={24} />
+                                    <Image src={"/assets/images/use-cases/linkedin.png"} alt="linkedin" width={24} height={24} />
+                                </div>
+                            </div>
+
+                            {/* Use Cases Section */}
+                            <div className='bg-white dark:bg-[#FFFFFF08] rounded-xl'>
+                                <h4 className='fs-20 font-bold dark:text-white mb-3 p-3'>See More Use Cases</h4>
+                                <ul className='mb-5'>
+                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Financial Analysis</li>
+                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Anonymous and Private Conversations </li>
+                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Multi-Modality (Healthcare)</li>
+                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Responsive</li>
+                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Elijah</li>
+                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Financial Executives</li>
+                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Multi-LLM Querying</li>        
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div 
+                            className="bg-gradient-to-r from-[#30C5D2] to-[#471069] h-12 flex items-center justify-center cursor-pointer"
+                            onClick={toggleMenu}
+                        >
+                            <div className="flex items-center gap-2 text-white">
+                                <span className="text-sm font-medium">Close</span>
+                                <svg 
+                                    className="w-5 h-5 transition-transform duration-300" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ref={bottomSentinelRef} style={{ height: 1 }} />
             </div>
         </div>
     )

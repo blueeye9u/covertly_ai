@@ -51,11 +51,11 @@
   <defs>
     <linearGradient id="paint0_linear_3_42938" x1="27.3359" y1="35.5227" x2="63.563" y2="35.5227" gradientUnits="userSpaceOnUse">
       <stop stop-color="#30C5D2"/>
-      <stop offset="1" stop-color="#471069"/>
+      <stop offset="1" stop-color="#C9BFD6"/>
     </linearGradient>
     <linearGradient id="paint1_linear_3_42938" x1="24.0234" y1="53.2457" x2="27.8875" y2="53.2457" gradientUnits="userSpaceOnUse">
       <stop stop-color="#30C5D2"/>
-      <stop offset="1" stop-color="#471069"/>
+      <stop offset="1" stop-color="#C9BFD6"/>
     </linearGradient>
     <clipPath id="clip0_3_42938">
       <rect width="96" height="95.9999" fill="white" transform="translate(0.5 0.898438)"/>
