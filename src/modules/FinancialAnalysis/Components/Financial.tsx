@@ -36,7 +36,7 @@ const data=[
     },
     {
         title:"Auto-deletion upon session close",
-        desc:"Once you&apos;re done, all financial data is erased, ensuring total confidentiality.",
+        desc:"Once you're done, all financial data is erased, ensuring total confidentiality.",
         no:"07"
     },
 ]
@@ -278,7 +278,7 @@ const Financial = () => {
                             <div className='grid sm:grid-cols-1 lg:grid-cols-2 sm:gap-24 mb-5 pt-24'>
                                 <div className='text-sm dark:text-[#D2D3D4]'>
                                     <p className='mb-2'>Covertly Al is not just an Al tool-it is the most secure way for financial executives to analyze and interpret their financial statements without the risk of exposing sensitive data. This means you get the power of Al-driven financial insights without a trace.</p>
-                                    <p className='mb-2'>In today&apos;s financial landscape, data security is non-negotiable. Al-driven insights should empower, not expose.</p>
+                                    <p className='mb-2'>{"In today's financial landscape, data security is non-negotiable. Al-driven insights should empower, not expose."}</p>
                                 </div>
                                 <div className='text-sm dark:text-[#D2D3D4]'>Covertly Al gives financial executives the ability to analyze, forecast, and strategize-all while ensuring complete privacy and compliance. Your financial data is valuable. Covertly Al ensures it stays secure.</div>
                             </div>
@@ -297,7 +297,7 @@ const Financial = () => {
                         <p className='dark:text-white fs-24 font-semibold'>Tamás Hám-Szabó</p>
                         <p className='dark:text-lavender text-sm fs-16 mb-2'>Founder of SAAS First - the Best AI and Data-Driven Customer Engagement Tool</p>
                         <hr />
-                        <p className='dark:text-lavender text-sm fs-16 mt-2'>With 11 years in SaaS, I&apos;ve built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let&apos;s connect if you share the same drive for success!</p>
+                        <p className='dark:text-lavender text-sm fs-16 mt-2'>{"With 11 years in SaaS, I've built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let's connect if you share the same drive for success!"}</p>
                     </div>
                     <div className='use-cases-profile' style={{ backgroundImage: 'url(/assets/images/use-cases/bg2.png)'}} >
                         <p className='dark:text-lavender text-sm fs-16 mb-2'>Share with your community!</p>
@@ -355,7 +355,7 @@ const Financial = () => {
                                 <p className='dark:text-white fs-20 font-semibold'>Tamás Hám-Szabó</p>
                                 <p className='dark:text-lavender text-xs fs-14 mb-2'>Founder of SAAS First - the Best AI and Data-Driven Customer Engagement Tool</p>
                                 <hr />
-                                <p className='dark:text-lavender text-xs fs-14 mt-2'>With 11 years in SaaS, I&apos;ve built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let&apos;s connect if you share the same drive for success!</p>
+                                <p className='dark:text-lavender text-xs fs-14 mt-2'>{"With 11 years in SaaS, I've built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let's connect if you share the same drive for success!"}</p>
                             </div>
 
                             <div className='use-cases-profile mb-4' style={{ backgroundImage: 'url(/assets/images/use-cases/bg2.png)'}} >
