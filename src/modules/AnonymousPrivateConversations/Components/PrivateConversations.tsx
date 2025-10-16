@@ -136,7 +136,7 @@ const PrivateConversations = () => {
                     <div className='mb-24'>
                         <h6 className='fs-32 mb-2 dark:text-white'>Overview</h6>
                         <div className='grid sm:grid-cols-1 lg:grid-cols-2 sm:gap-24'>
-                            <div className='text-sm dark:text-[#D2D3D4]'>Whether you're asking about sensitive health conditions, seeking legal advice, or sharing personal information to get location-based insights, privacy is essential. Traditional AI platforms often store user prompts, log identifying details, or require account creation, leaving personal details exposed to potential data breaches, tracking, or unwanted profiling.</div>
+                            <div className='text-sm dark:text-[#D2D3D4]'>Whether you&apos;re asking about sensitive health conditions, seeking legal advice, or sharing personal information to get location-based insights, privacy is essential. Traditional AI platforms often store user prompts, log identifying details, or require account creation, leaving personal details exposed to potential data breaches, tracking, or unwanted profiling.</div>
                             <div className='text-sm dark:text-[#D2D3D4]'>Covertly AI provides a completely anonymous and unmoderated AI chat platform, empowering users to ask deeply personal, location-specific, or health-related questions without fear of surveillance or data retention. Designed with end-to-end anonymity, auto-redaction, and stateless architecture, Covertly AI offers a safe space to engage with AI for your most sensitive queries.</div>
                         </div>
                     </div>
@@ -191,7 +191,7 @@ const PrivateConversations = () => {
                                     <li className='dark:text-lavender text-sm'>Home or work addresses</li>
                                     <li className='dark:text-lavender text-sm'>Health-related identiflers</li>
                                 </ul>
-                                <p className='dark:text-lavender text-sm'>This ensures that even if you enter sensitive data (e.g., "I live at 123 Main St" or "I have chest pain when running"), it is automatically secured before processing.</p>
+                                <p className='dark:text-lavender text-sm'>This ensures that even if you enter sensitive data (e.g., &quot;I live at 123 Main St&quot; or &quot;I have chest pain when running&quot;), it is automatically secured before processing.</p>
                             </div>
                         </div>
                         <div>
@@ -204,7 +204,7 @@ const PrivateConversations = () => {
                             <h4 className='fs-32 mb-6'>More Reasons Users Trust Covertly AI</h4>
                             <div className='grid sm:grid-cols-3 gap-6'> 
                                 <div className='flex flex-col shadow-sm' key={uuidv4()}>
-                                    <h5 className='fs-24 mb-5'>Talk Freely — Your Conversations Won't Stick Around</h5>
+                                    <h5 className='fs-24 mb-5'>Talk Freely — Your Conversations Won&apos;t Stick Around</h5>
                                     <p className="text-black dark:text-white text-sm">No memory. No history. Once your session ends, all data is permanently erased, delivering a truly private, ephemeral chat experience.</p>
                                 </div>
                                 <div className='flex flex-col shadow-sm' key={uuidv4()}>
@@ -282,7 +282,7 @@ const PrivateConversations = () => {
                         <p className='dark:text-white fs-24 font-semibold'>Tamás Hám-Szabó</p>
                         <p className='dark:text-lavender text-sm fs-16 mb-2'>Founder of SAAS First - the Best AI and Data-Driven Customer Engagement Tool</p>
                         <hr />
-                        <p className='dark:text-lavender text-sm fs-16 mt-2'>With 11 years in SaaS, I've built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let's connect if you share the same drive for success!</p>
+                        <p className='dark:text-lavender text-sm fs-16 mt-2'>With 11 years in SaaS, I&apos;ve built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let&apos;s connect if you share the same drive for success!</p>
                     </div>
                     <div className='use-cases-profile' style={{ backgroundImage: 'url(/assets/images/use-cases/bg2.png)'}} >
                         <p className='dark:text-lavender text-sm fs-16 mb-2'>Share with your community!</p>
@@ -340,7 +340,7 @@ const PrivateConversations = () => {
                                 <p className='dark:text-white fs-20 font-semibold'>Tamás Hám-Szabó</p>
                                 <p className='dark:text-lavender text-xs fs-14 mb-2'>Founder of SAAS First - the Best AI and Data-Driven Customer Engagement Tool</p>
                                 <hr />
-                                <p className='dark:text-lavender text-xs fs-14 mt-2'>With 11 years in SaaS, I've built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let's connect if you share the same drive for success!</p>
+                                <p className='dark:text-lavender text-xs fs-14 mt-2'>With 11 years in SaaS, I&apos;ve built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let&apos;s connect if you share the same drive for success!</p>
                             </div>
 
                             <div className='use-cases-profile mb-4' style={{ backgroundImage: 'url(/assets/images/use-cases/bg2.png)'}} >
