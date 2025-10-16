@@ -1,11 +1,11 @@
-import Image from 'next/image'
-import { v4 as uuidv4 } from "uuid";
-import { useTheme } from '../../../context/themeContext';
 import React, { useState, useEffect, useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import Image from 'next/image'
+import { v4 as uuidv4 } from "uuid";
 import { Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
+import { useTheme } from '../../../context/themeContext';
 
 const data=[
     {

@@ -1,6 +1,5 @@
 import React from 'react'
 import Banner from './Components/Banner'
-import { FaqData } from '../../constants/faq-data'
 import PrivateConversations from './Components/PrivateConversations'
 
 const AnonymousPrivateConversations = () => {

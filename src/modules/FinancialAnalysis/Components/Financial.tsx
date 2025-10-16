@@ -1,7 +1,7 @@
+import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { v4 as uuidv4 } from "uuid";
 import { useTheme } from '../../../context/themeContext';
-import React, { useState, useEffect, useRef } from 'react'
 
 const data=[
     {

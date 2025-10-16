@@ -549,12 +549,12 @@
 
 .chatBoot__message ol li,
 .chatBoot__message ul li {
-  @apply pb-4 ml-8;
+  @apply ml-8;
 }
 
 .chatBoot__message ol li ul li,
 .chatBoot__message ul li ol li {
-  @apply pb-4 !ml-0;
+  @apply  !ml-0;
 }
 
 .chatBoot__message ol ul,
@@ -952,6 +952,14 @@ div.pricing_card.pricing_card--selected {
   }
 }
 
+
+/* Slightly larger title text on mobile */
+@media only screen and (max-width: 640px) {
+  .title .coloredText {
+    font-size: 12vmin;
+  }
+}
+
 .animatedBtn {
   text-align: center;
   padding: 10px 20px;
@@ -973,34 +981,12 @@ div.pricing_card.pricing_card--selected {
 }
 .heroBtn {
   position: relative;
-  top: 49vh;
+  top: 50vh;
 }
 
-@media only screen and (max-width: 1024px) {
+@media (max-width: 1024px) {
   .heroBtn {
-    top: 50vh
-  }
-}
-@media only screen and (max-width: 768px) {
-  .heroBtn {
-    top: 51vh
-  }
-}
-@media only screen and (max-width: 640px) {
-  .heroBtn {
-    top: 52vh
-  }
-}
-
-@media only screen and (max-width: 430px) {
-  .heroBtn {
-    top: 56vh
-  }
-}
-
-@media only screen and (max-width: 390px) {
-  .heroBtn {
-    top: 57vh
+    top: 45vh
   }
 }
 
@@ -1361,7 +1347,7 @@ div.pricing_card.pricing_card--selected {
 @media (max-width: 560px) {
   .landing_home-banner {
     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-    min-height: 100vh;
+    height: calc(100vh - 72px);
     height: auto;
   }
 }
