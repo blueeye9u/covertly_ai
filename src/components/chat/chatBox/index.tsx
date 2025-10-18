@@ -541,6 +541,7 @@ export default function ChatBox(props: Readonly<ChatBoxProps>): JSX.Element {
         windowHeight,
         currentModel,
         improving,
+        redoImproving,
         translating,
         setTranslating,
         sourcesVisibility,
@@ -553,12 +554,17 @@ export default function ChatBox(props: Readonly<ChatBoxProps>): JSX.Element {
         handleClickLLMSuggestion,
         handleToggleSources,
         handleImprovePrompt,
+        handleUndoImprovedPrompt,
+        handleRedoImprovedPrompt,
+        canUndoImprovement,
+        canRedoImprovement,
         wasPromptImproved,
         followUpQuestions,
         llmSuggestions,
         isLiveSearch,
         setIsLiveSearch,
-        selected
+        selected,
+        setSelected
     } = useChatBoxLogic({ ...props, setUserInput, userInput, handleSendMessage, conversationMessages });
 
     const {
@@ -837,10 +843,10 @@ export default function ChatBox(props: Readonly<ChatBoxProps>): JSX.Element {
             {!fetchingData && conversationMessages.length === 0 && <ChatModel selected={selected} />}
             <div className={"chatBoot__body flex flex-col pb-4"}>
                 {shouldShowWelcomeScreen() ? (
-                    <div className="flex-1 flex flex-col justify-center items-center" style={{ minHeight: 'calc(100vh - 300px)' }}>
+                    <div className={`flex-1 flex flex-col items-center ${isDeepSearch? 'justify-start' : 'justify-center'}`} style={{ minHeight: 'calc(100vh - 300px)' }}>
                         {isDeepSearch ? (
-                            <div className="flex justify-center px-6">
-                                <div className="w-full max-w-[880px] rounded-xl bg-whiteSmoke dark:bg-blackRussian3 p-4 md:p-6 backdrop-blur">
+                            <div className="w-full flex justify-center px-6">
+                                <div className="w-full max-w-[600px] rounded-xl bg-whiteSmoke dark:bg-blackRussian3 p-4 md:p-6 backdrop-blur">
                                     <div className="flex flex-col gap-2">
                                         <h3 className="text-base md:text-lg font-semibold dark:text-white">Explore Deeper Insights with Our Advanced Research Agent</h3>
                                         <p className="text-sm md:text-base text-aluminium dark:text-gray-300">
@@ -963,7 +969,12 @@ export default function ChatBox(props: Readonly<ChatBoxProps>): JSX.Element {
                             setIsLiveSearch={setIsLiveSearch}
                             selected={selected}
                             handleImprovePrompt={handleImprovePrompt}
+                            onUndoImprove={handleUndoImprovedPrompt}
+                            onRedoImprove={handleRedoImprovedPrompt}
+                            canUndoImprove={canUndoImprovement}
+                            canRedoImprove={canRedoImprovement}
                             isAnyLoading={isAnyLoading}
+                            redoImproving={redoImproving}
                             wasPromptImproved={wasPromptImproved}
                             files={files}
                             isGenerating={generatingMessage}
@@ -971,6 +982,7 @@ export default function ChatBox(props: Readonly<ChatBoxProps>): JSX.Element {
                             onModelSelect={handleSelectChat}
                             highlightSelected={highlightSelected}
                             setHighlightSelected={setHighlightSelected}
+                            setSelected={setSelected}
                         />
                     </div>
 

@@ -415,7 +415,7 @@ const ExploreModelAnimation = () => {
     const strokeColor = isDarkMode ? "white" : "black";
 
     return (
-        <div className="sm:h-[434px] flex justify-center items-center md:w-[839px] w-full mx-auto relative">
+        <div className="sm:h-[434px] flex justify-center items-center md:w-[839px] w-full mx-auto relative py-8 md:py-0">
 
             <Link href={isLoggedIn ? AUTHENTICATED_ROUTES.CHAT : UN_AUTHENTICATED_ROUTES.SIGNUP as string}>
                 <div ref={buttonRef}>
@@ -435,7 +435,7 @@ const ExploreModelAnimation = () => {
                     />
                 </div>
             </Link>
-            <svg width="100%" height="100%" viewBox="0 0 841 219" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="100%" height="100%" viewBox="0 0 841 219" fill="none" xmlns="http://www.w3.org/2000/svg" className="min-w-[650px]">
                 {/* Visible paths with reduced opacity */}
                 <VisiblePaths strokeColor={strokeColor} />
 

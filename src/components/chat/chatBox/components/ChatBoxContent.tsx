@@ -39,6 +39,11 @@ interface ChatBoxContentProps {
   setIsLiveSearch: (value: boolean) => void;
   selected: any;
   handleImprovePrompt: () => void;
+  onUndoImprove?: () => void;
+  onRedoImprove?: () => void;
+  canUndoImprove?: boolean;
+  canRedoImprove?: boolean;
+  redoImproving?: boolean;
   isAnyLoading: boolean;
   wasPromptImproved: boolean;
   files: any[];
@@ -47,6 +52,7 @@ interface ChatBoxContentProps {
   onModelSelect?: (model: any) => void;
   highlightSelected?: any;
   setHighlightSelected?: (model: any) => void;
+  setSelected?: (model: any) => void;
 }
 
 const StopIcon = () => (
@@ -93,12 +99,12 @@ const FilePreview = ({ uploadedFile, previewURL, setPreviewURL }: any) => {
   );
 };
 
-const ImprovePromptButton = ({ userInput, isAnyLoading, improving, handleImprovePrompt, wasPromptImproved }: any) => {
+const ImprovePromptButton = ({ userInput, isAnyLoading, improving, handleImprovePrompt, wasPromptImproved, redoImproving = false }: any) => {
   if (improving) {
     return <ImSpinner9 className="animate-spin text-lg" />;
   }
 
-  const isDisabled = !userInput.trim() || isAnyLoading || wasPromptImproved;
+  const isDisabled = !userInput.trim() || isAnyLoading || wasPromptImproved || redoImproving;
 
   return (
     <button
@@ -128,6 +134,35 @@ const ImprovePromptButton = ({ userInput, isAnyLoading, improving, handleImprove
       </svg>
       <span className="hidden lg:inline">{wasPromptImproved ? 'Improved Prompt' : 'Improve Prompt'}</span>
     </button>
+  );
+};
+
+const UndoRedoButtons = ({ onUndoImprove, onRedoImprove, canUndoImprove, canRedoImprove, isAnyLoading, redoImproving, improving }: any) => {
+  const undoDisabled = !canUndoImprove || isAnyLoading || improving || redoImproving;
+  const redoDisabled = !canRedoImprove || isAnyLoading || improving || redoImproving;
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        className={`flex items-center justify-center gap-2 bg-whiteSmoke hover:bg-linkWater dark:bg-blackRussian3 dark:hover:bg-blackRussian4 rounded-full p-2 sm:rounded-md sm:px-4 sm:py-2 transition-colors dark:text-white text-black text-sm duration-300 whitespace-nowrap ${
+          undoDisabled ? 'disabled:opacity-25 cursor-not-allowed pointer-events-none' : ' cursor-pointer'
+        }`}
+        aria-disabled={undoDisabled}
+        disabled={undoDisabled}
+        onClick={onUndoImprove}
+      >
+        <span className="hidden lg:inline">Undo</span>
+      </button>
+      <button
+        className={`flex items-center justify-center gap-2 bg-whiteSmoke hover:bg-linkWater dark:bg-blackRussian3 dark:hover:bg-blackRussian4 rounded-full p-2 sm:rounded-md sm:px-4 sm:py-2 transition-colors dark:text-white text-black text-sm duration-300 whitespace-nowrap ${
+          redoDisabled ? 'disabled:opacity-25 cursor-not-allowed pointer-events-none' : ' cursor-pointer'
+        }`}
+        aria-disabled={redoDisabled}
+        disabled={redoDisabled}
+        onClick={onRedoImprove}
+      >
+        {redoImproving ? <ImSpinner9 className="animate-spin text-lg" /> : <span className="hidden lg:inline">Redo</span>}
+      </button>
+    </div>
   );
 };
 
@@ -263,13 +298,19 @@ const InputArea = ({
   setIsLiveSearch,
   selected,
   handleImprovePrompt,
+  onUndoImprove,
+  onRedoImprove,
+  canUndoImprove,
+  canRedoImprove,
+  redoImproving,
   wasPromptImproved,
   files,
   isGenerating,
   conversationMessages,
   onModelSelect,
   highlightSelected,
-  setHighlightSelected
+  setHighlightSelected,
+  setSelected
 }: any) => {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && userInput.length > MAX_INPUT_LENGTH) {
@@ -278,6 +319,8 @@ const InputArea = ({
     }
     
     if (handleInputKeyDown) {
+      if(!selected && highlightSelected)
+        setSelected(highlightSelected);
       handleInputKeyDown(event);
     }
   };
@@ -332,7 +375,7 @@ const InputArea = ({
               onConfirm: handleStopGeneration,
             });
           }}
-          className="chatBoot__foot__senderButton !bottom-2 bg-whiteSmoke hover:bg-linkWater dark:bg-blackRussian3 dark:hover:bg-blackRussian4 rounded-full p-1.5 transition-colors dark:text-white text-black text-sm duration-300"
+          className="chatBoot__foot__senderButton !bottom-[15px] bg-whiteSmoke hover:bg-linkWater dark:bg-blackRussian3 dark:hover:bg-blackRussian4 rounded-full p-1.5 transition-colors dark:text-white text-black text-sm duration-300"
         >
           <StopIcon/>
         </button>
@@ -372,6 +415,17 @@ const InputArea = ({
           improving={improving}
           handleImprovePrompt={handleImprovePrompt}
           wasPromptImproved={wasPromptImproved}
+          redoImproving={redoImproving}
+        />
+
+        <UndoRedoButtons
+          onUndoImprove={onUndoImprove}
+          onRedoImprove={onRedoImprove}
+          canUndoImprove={canUndoImprove}
+          canRedoImprove={canRedoImprove}
+          isAnyLoading={isAnyLoading}
+          redoImproving={redoImproving}
+          improving={improving}
         />
 
         <LiveSearchButton
@@ -426,6 +480,11 @@ export const ChatBoxContent: React.FC<ChatBoxContentProps> = ({
   setIsLiveSearch,
   selected,
   handleImprovePrompt,
+  onUndoImprove,
+  onRedoImprove,
+  canUndoImprove,
+  canRedoImprove,
+  redoImproving,
   isAnyLoading,
   wasPromptImproved,
   files,
@@ -433,16 +492,19 @@ export const ChatBoxContent: React.FC<ChatBoxContentProps> = ({
   conversationMessages,
   onModelSelect,
   highlightSelected,
-  setHighlightSelected
+  setHighlightSelected,
+  setSelected
 }) => {
   return (
     <>
-      <FilePreview
-        uploadedFile={uploadedFile}
-        previewURL={previewURL}
-        setPreviewURL={setPreviewURL} 
-      />
-      
+      {
+        !isDeepSearch && <FilePreview
+          uploadedFile={uploadedFile}
+          previewURL={previewURL}
+          setPreviewURL={setPreviewURL}
+        />
+      }
+
       <InputArea
         currentModel={currentModel}
         handleUploadModal={handleUploadModal}
@@ -467,6 +529,11 @@ export const ChatBoxContent: React.FC<ChatBoxContentProps> = ({
         setIsLiveSearch={setIsLiveSearch}
         selected={selected}
         handleImprovePrompt={handleImprovePrompt}
+        onUndoImprove={onUndoImprove}
+        onRedoImprove={onRedoImprove}
+        canUndoImprove={canUndoImprove}
+        canRedoImprove={canRedoImprove}
+        redoImproving={redoImproving}
         wasPromptImproved={wasPromptImproved}
         files={files}
         isGenerating={isGenerating}
@@ -474,6 +541,7 @@ export const ChatBoxContent: React.FC<ChatBoxContentProps> = ({
         onModelSelect={onModelSelect}
         highlightSelected={highlightSelected}
         setHighlightSelected={setHighlightSelected}
+        setSelected={setSelected}
       />
     </>
   );

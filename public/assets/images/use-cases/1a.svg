@@ -1,5 +1,5 @@
 <svg width="96" height="97" viewBox="0 0 96 97" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path fill-rule="evenodd" clip-rule="evenodd" d="M48 0.897942C74.5096 0.897942 96 22.3883 96 48.8984C96 75.4081 74.5096 96.8984 48 96.8984C21.4904 96.8984 0 75.4081 0 48.8984C0 22.3883 21.4904 0.897942 48 0.897942Z" fill="#FFFFFF"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M48 0.897942C74.5096 0.897942 96 22.3883 96 48.8984C96 75.4081 74.5096 96.8984 48 96.8984C21.4904 96.8984 0 75.4081 0 48.8984C0 22.3883 21.4904 0.897942 48 0.897942Z" fill="#E9EBF1"/>
   <mask id="mask0_3_42867" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="34" y="27" width="13" height="15">
     <path fill-rule="evenodd" clip-rule="evenodd" d="M34.4766 27.1626H46.0683V41.6543H34.4766V27.1626Z" fill="white"/>
   </mask>

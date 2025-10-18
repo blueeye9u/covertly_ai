@@ -351,9 +351,9 @@ const ChatModule: React.FC<ChatModuleProps> = () => {
 
   useEffect(() => {
     if (!chatStreamId) return;
-  
+
     const targetIndex = conversationMessages.length - 1;
-  
+
     conversationStreamService.subscribeToChatStream(chatStreamId, (data) => {
       if (data?.citations || data?.chatEvent) {
         setConversationMessages((prev) => {
@@ -378,39 +378,50 @@ const ChatModule: React.FC<ChatModuleProps> = () => {
           setChatMessages([chat, ...(chatMessages as Chat[])]);
         }
       }
-  
+
       if (data?.finalizedData) {
         const { question, response, chat } = data.finalizedData;
-  
+
         if (response?.followUpQuestions) {
           setFollowUpQuestions(response.followUpQuestions);
         }
         if (response?.llmSuggestions) {
           setLLMSuggestions(response.llmSuggestions);
         }
-  
+
         setCurrentChat({ ...chat });
         setCurrentChatId(chat._id);
         setRouterId(chat._id);
         router.replace(`${router.pathname}?id=${chat._id}`, undefined, {
           shallow: true,
         });
-  
+
         if (selectedModel.key === Elijah.key) {
-          setConversationMessages(prevMessages => updateElijahMessages(prevMessages, response));
+          setConversationMessages(prevMessages =>
+            updateElijahMessages(prevMessages, response)
+          );
         } else {
-          setConversationMessages(prevMessages => updateRegularMessages(prevMessages, question, response));
+          setConversationMessages(prevMessages =>
+            updateRegularMessages(prevMessages, question, response)
+          );
         }
-        // Use the extracted helper function to update chat messages
+
         setChatMessages(updateChatList(chatMessages ?? [], chat));
-        unsubscribeFromStream(chatStreamId, conversationStreamService.unsubscribeFromChatStream);
+
+        
+        unsubscribeFromStream(chatStreamId, (id) =>
+          conversationStreamService.unsubscribeFromChatStream(id)
+        );
       }
     });
-  
+
     return () => {
-      unsubscribeFromStream(chatStreamId, conversationStreamService.unsubscribeFromChatStream);
+      unsubscribeFromStream(chatStreamId, (id) =>
+        conversationStreamService.unsubscribeFromChatStream(id)
+      );
     };
   }, [chatStreamId]);
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value && selectedModel && !validateChatSubscription(selectedModel?.key)) {

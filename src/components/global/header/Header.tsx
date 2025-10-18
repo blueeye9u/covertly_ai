@@ -45,7 +45,7 @@ const Header = () => {
       `}
     >
       <div className="container-landingpage">
-        <div className="flex items-center lg:justify-between gap-3 sm:gap-5 lg:gap-10 py-4">
+        <div className="flex items-center lg:justify-between gap-3 sm:gap-5 lg:gap-10 pt-4 pb-[20px]">
           <Link href={"/"} className="shrink-0">
             <ImageComponent
               priority

@@ -47,8 +47,11 @@ export const useChatBoxLogic = (props: any) => {
   const [windowHeight, setWindowHeight] = useState(globalThis.window === undefined ? 0 : globalThis.window.innerHeight);
   const [currentModel, setCurrentModel] = useState<any>({});
   const [improving, setImproving] = useState<boolean>(false);
+  const [redoImproving, setRedoImproving] = useState<boolean>(false);
   const [wasPromptImproved, setWasPromptImproved] = useState<boolean>(false);
   const [lastImprovedPrompt, setLastImprovedPrompt] = useState<string>("");
+  // Persist the user's very first original input prior to any improvement
+  const [originalUserInput, setOriginalUserInput] = useState<string>("");
   const [translating, setTranslating] = useState<boolean>(false);
   const [sourcesVisibility, setSourcesVisibility] = useState<{[key: string]: boolean}>({});
 
@@ -154,6 +157,10 @@ export const useChatBoxLogic = (props: any) => {
       }
 
       setImproving(true);
+      // Capture original input only once (first time improve is triggered)
+      if (!originalUserInput) {
+        setOriginalUserInput(userInput);
+      }
       const res = await promptEnhancerService.improvePrompt({ prompt: userInput });
       if (res?.payload?.improvedPrompt) {
         setUserInput(res.payload.improvedPrompt);
@@ -169,7 +176,58 @@ export const useChatBoxLogic = (props: any) => {
     } finally {
       setImproving(false);
     }
-  }, [userInput, setUserInput, wasPromptImproved, lastImprovedPrompt]);
+  }, [userInput, setUserInput, wasPromptImproved, lastImprovedPrompt, originalUserInput]);
+
+  // Undo/Redo handlers for last improvement action
+  const canUndoImprovement = useMemo(() => {
+    // Allow undo only when we have an original input and current text differs from it
+    return Boolean(originalUserInput && userInput !== originalUserInput);
+  }, [originalUserInput, userInput]);
+
+  const canRedoImprovement = useMemo(() => {
+    // Allow redo only when we have an original input and current text differs from it
+    return Boolean(originalUserInput && userInput !== originalUserInput);
+  }, [originalUserInput, userInput]);
+
+  const handleUndoImprovedPrompt = useCallback(() => {
+    if (!canUndoImprovement) return;
+    // Always restore the very original user input
+    setUserInput(originalUserInput);
+  }, [canUndoImprovement, originalUserInput, setUserInput]);
+
+  const handleReImprovePrompt = useCallback(async () => {
+    try {
+      // Re-run improvement on the very original input
+      if (!originalUserInput.trim()) {
+        toast.error("No original input found to re-improve");
+        return;
+      }
+
+      setRedoImproving(true);
+      const res = await promptEnhancerService.improvePrompt({ prompt: originalUserInput });
+      if (res?.payload?.improvedPrompt) {
+        setUserInput(res.payload.improvedPrompt);
+        setWasPromptImproved(true);
+        setLastImprovedPrompt(res.payload.improvedPrompt);
+        toast.success("Prompt improved successfully!");
+      } else {
+        toast.error("Failed to improve prompt");
+      }
+    } catch (error) {
+      console.error("Error improving prompt:", error);
+      toast.error("Failed to improve prompt. Please try again.");
+    } finally {
+      setRedoImproving(false);
+    }
+  }, [originalUserInput, setUserInput]);
+
+  const handleRedoImprovedPrompt = useCallback(() => {
+    if (!canRedoImprovement) return;
+    // Trigger a fresh improvement request regardless of previous state
+    (async () => {
+      await handleReImprovePrompt();
+    })();
+  }, [canRedoImprovement, handleReImprovePrompt]);
 
   useEffect(() => {
     if (wasPromptImproved && userInput !== lastImprovedPrompt) {
@@ -242,6 +300,7 @@ export const useChatBoxLogic = (props: any) => {
     windowHeight,
     currentModel,
     improving,
+    redoImproving,
     wasPromptImproved,
     translating,
     setTranslating,
@@ -259,12 +318,18 @@ export const useChatBoxLogic = (props: any) => {
     handleClickLLMSuggestion,
     handleToggleSources,
     handleImprovePrompt,
+    handleReImprovePrompt,
+    handleUndoImprovedPrompt,
+    handleRedoImprovedPrompt,
+    canUndoImprovement,
+    canRedoImprovement,
     
     // Context values
     followUpQuestions,
     llmSuggestions,
     isLiveSearch,
     setIsLiveSearch,
-    selected
+    selected,
+    setSelected
   };
 };

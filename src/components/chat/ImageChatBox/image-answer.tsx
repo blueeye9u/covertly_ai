@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/legacy/image";
 import { v4 as uuidv4 } from "uuid";
@@ -24,6 +24,8 @@ const ImageAnswer = () => {
     const [gridColsClass, setGridColsClass] = useState("");
     const [allImages, setAllImages] = useState<any[]>([]);
     const [isLoadingImages, setIsLoadingImages] = useState(true);
+    const [dynamicSpacing, setDynamicSpacing] = useState(0);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const getGridColsClass = (count: number) => {
         switch (count) {
@@ -56,6 +58,67 @@ const ImageAnswer = () => {
 
     const selectedImage = imageGenerationLibrary.records.find((r) => r._id === imageGeneration._id) || {};
     
+    const isWelcomeSectionVisible = imageUrls?.length === 0 && !isImageGenerating && !isLoadingImages && allImages.length === 0;
+    
+    // Calculate dynamic spacing based on container height
+    useEffect(() => {
+        const calculateSpacing = () => {
+            if (containerRef.current) {
+                const containerHeight = containerRef.current.offsetHeight;
+                const containerCenter = containerHeight / 2;
+                const sectionB = containerRef.current.querySelector('[data-section-b]') as HTMLElement;
+                
+                if (sectionB) {
+                    const sectionBHeight = sectionB.offsetHeight;
+                    
+                    // Check if welcome section is visible
+                    const welcomeSection = containerRef.current.querySelector('[data-welcome-section]') as HTMLElement;
+                    
+                    if (welcomeSection) {
+                        // Welcome section is visible, calculate spacing from bottom of section A
+                        const welcomeSectionHeight = welcomeSection.offsetHeight;
+                        const distanceToCenter = containerCenter - welcomeSectionHeight;
+                        const adjustedSpacing = distanceToCenter - (sectionBHeight / 2);
+                        
+                        if (adjustedSpacing > 0) {
+                            setDynamicSpacing(adjustedSpacing);
+                        } else {
+                            setDynamicSpacing(20);
+                        }
+                    } else {
+                        // No welcome section, center section B in the full container
+                        const adjustedSpacing = (containerHeight / 2) - (sectionBHeight / 2);
+                        
+                        if (adjustedSpacing > 0) {
+                            setDynamicSpacing(adjustedSpacing);
+                        } else {
+                            setDynamicSpacing(20);
+                        }
+                    }
+                } else {
+                    setDynamicSpacing(0);
+                }
+            }
+        };
+
+        // Add a small delay to ensure elements are rendered
+        const timeoutId = setTimeout(() => {
+            calculateSpacing();
+        }, 100);
+
+        // Recalculate on window resize
+        const handleResize = () => {
+            calculateSpacing();
+        };
+
+        window.addEventListener('resize', handleResize);
+        
+        return () => {
+            clearTimeout(timeoutId);
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [isWelcomeSectionVisible, imageUrls, isImageGenerating, isLoadingImages]);
+
     // Fetch all images to check if intro should be shown
     useEffect(() => {
         const fetchAllImages = async () => {
@@ -133,11 +196,11 @@ const ImageAnswer = () => {
     const isNextDisabled = useMemo(() => navigationActiveIndex >= navigationRecords.length - 1, [navigationActiveIndex, navigationRecords.length]);
 
     return (
-        <div className="w-full mb-3 grow flex justify-center items-center relative">
+        <div ref={containerRef} className="w-full mb-3 grow flex flex-col items-center relative">
             
-            {allImages.length === 0 && !isImageGenerating && !isLoadingImages && (
-                <div className="absolute top-0 left-0 w-full flex justify-center px-4">
-                    <div className="w-full max-w-[880px] rounded-xl bg-whiteSmoke dark:bg-blackRussian3 rounded-md p-4 md:p-6 backdrop-blur">
+            {isWelcomeSectionVisible && (
+                <div className="w-full flex justify-center px-4" data-welcome-section>
+                    <div className="w-full max-w-[600px] bg-whiteSmoke dark:bg-blackRussian3 rounded-md p-4 md:p-6 backdrop-blur">
                         <div className="flex flex-col gap-2">
                             <h3 className="text-base md:text-lg font-semibold dark:text-white">Welcome to the Image Generator Interface!</h3>
                             <p className="text-sm md:text-base text-aluminium dark:text-gray-300">
@@ -148,7 +211,7 @@ const ImageAnswer = () => {
                 </div>
             )}
             {imageUrls?.length === 0 && !isImageGenerating ? (
-                <div className="flex flex-col items-center justify-center h-full">
+                <div className="flex flex-col items-center justify-start" style={{ marginTop: `${dynamicSpacing}px` }} data-section-b>
                     <Image
                         src={"/assets/images/start-image.svg"}
                         alt="AI Generated Image"

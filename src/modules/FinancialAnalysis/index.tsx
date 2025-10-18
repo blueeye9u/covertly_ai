@@ -4,7 +4,7 @@ import Financial from './Components/Financial'
 
 const FinancialAnalysisModule = () => {
   return (
-    <section className='dark:bg-[url(/assets/images/how-it-works-background.svg)] bg-no-repeat bg-cover bg-center pt-[72px]'>
+    <section className='dark:bg-bg-athensgray dark:bg-blackRussian bg-no-repeat bg-cover bg-center pt-[72px]'>
       <Banner />
       <Financial />
     </section>

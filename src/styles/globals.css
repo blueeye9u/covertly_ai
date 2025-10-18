@@ -465,7 +465,7 @@
 }
 
 .chatBoot__foot textarea {
-  @apply md:max-w-[660px] lg:max-w-[700px] xl:max-w-[1000px] w-full pr-12 dark:text-white AtScrollNone resize-none bg-transparent focus:outline-none focus:ring-0;
+  @apply md:max-w-[660px] lg:max-w-[700px] xl:max-w-[1000px] w-full pr-12 dark:text-white smartScrollbar resize-none bg-transparent focus:outline-none focus:ring-0;
 }
 
 .chatBoot__foot__senderButton {
@@ -858,6 +858,41 @@ div.pricing_card.pricing_card--selected {
   max-height: 300px;
 }
 
+/* FAQ hover and open effects */
+.faq-hover:hover {
+  border-color: transparent !important;
+  border-top-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+.faq-open {
+  border-color: transparent !important;
+  border-top-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+/* More specific targeting for FAQ borders */
+.group:hover .faq-hover {
+  border-color: transparent !important;
+  border-top-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+/* Hide the top border of the next item when hovering over current item */
+.faq-item-wrapper:hover + .faq-item-wrapper .faq-hover {
+  border-top-color: transparent !important;
+}
+
+/* Hide bottom border when current item is hovered */
+.faq-item-wrapper:hover .faq-hover {
+  border-bottom-color: transparent !important;
+}
+
+/* Hide the bottom border of the previous item when hovering over current item */
+.faq-item-wrapper:hover .faq-hover {
+  border-top-color: transparent !important;
+}
+
 .benefits__covertly {
   @apply relative after:absolute after:w-[804px] after:h-[1332px] after:bg-[url('/assets/images/shade-1.png')] after:bg-no-repeat after:left-0 after:top-[-200px] after:-z-10;
 }
@@ -984,7 +1019,17 @@ div.pricing_card.pricing_card--selected {
   top: 50vh;
 }
 
-@media (max-width: 1024px) {
+@media only screen and (max-width: 570px) {
+  .heroBtn {
+    top: 45vh
+  }
+}
+@media only screen and (max-width: 570px) {
+  .heroBtn {
+    top: 45vh
+  }
+}
+@media only screen and (max-width: 570px) {
   .heroBtn {
     top: 45vh
   }
@@ -1042,12 +1087,12 @@ div.pricing_card.pricing_card--selected {
 }
 
 .anonymity_slider .swiper-pagination-bullet {
-  @apply !w-1.5 !h-1.5 !bg-dark-8
+  @apply !w-2 !h-2 !bg-dark-100 dark:!bg-dark-8
 }
 
 .anonymity_slider .swiper-pagination-bullet-active {
   @apply !w-2.5 !h-2.5;
-  background: linear-gradient(to right, #30C5D2, #471069);
+  @apply !w-2.5 !h-2.5 !bg-mediumTurquoise dark:!bg-mediumTurquoise;
 }
 
 /* Ensure fixed width slides for the anonymity slider */
@@ -1170,7 +1215,7 @@ div.pricing_card.pricing_card--selected {
 }
 
 .SuggestionSearch_inner {
-  @apply relative p-4 rounded-[8px] cursor-pointer bg-white dark:bg-blackRussian2 duration-300 border border-transparent flex gap-4 text-left;
+  @apply relative p-4 rounded-[8px] cursor-pointer bg-white dark:bg-blackRussian2 duration-300 border border-transparent flex gap-4 text-left min-h-[140px];
 }
 
 .SuggestionSearch_inner:hover {
@@ -3179,6 +3224,12 @@ div.pricing_card.pricing_card--selected {
   padding: 0 10px;
 }
 .see-more-use-cases:hover {
+  color: #30C5D2 !important;
+  border-left: 3px solid #30C5D2;
+  cursor: pointer;
+}
+
+.see-more-use-cases-focus {
   color: #30C5D2 !important;
   border-left: 3px solid #30C5D2;
   cursor: pointer;

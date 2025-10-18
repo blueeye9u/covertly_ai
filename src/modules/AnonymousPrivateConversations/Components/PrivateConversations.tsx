@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import Image from 'next/image'
 import { v4 as uuidv4 } from "uuid";
@@ -6,6 +6,10 @@ import { Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import { useTheme } from '../../../context/themeContext';
+import { useScrollMenu } from '../../../hooks/useScrollMenu';
+import Sidebar from '../../../components/shared/Sidebar';
+import MobileMenu from '../../../components/shared/MobileMenu';
+import TitleGrid from '../../../components/shared/TitleGrid';
 
 const data=[
     {
@@ -87,86 +91,48 @@ const title=[
 
 const PrivateConversations = () => {
     const { isDarkMode} = useTheme();
-    const [isMenuExpanded, setIsMenuExpanded] = useState(false);
-    const [isAtBottom, setIsAtBottom] = useState(false);
-    const bottomSentinelRef = useRef<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const rect = bottomSentinelRef.current?.getBoundingClientRect();
-            if (rect) {
-                setIsAtBottom(rect.top <= window.innerHeight);
-            }
-        };
-
-        let observer: IntersectionObserver | null = null;
-        if ('IntersectionObserver' in window && bottomSentinelRef.current) {
-            observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => {
-                        setIsAtBottom(entry.isIntersecting);
-                    });
-                },
-                {
-                    root: null,
-                    threshold: 0.01,
-                }
-            );
-            observer.observe(bottomSentinelRef.current);
-        } else {
-            window.addEventListener('scroll', handleScroll, { passive: true });
-            handleScroll();
-        }
-
-        return () => {
-            if (observer && bottomSentinelRef.current) {
-                observer.unobserve(bottomSentinelRef.current);
-            }
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-
-    const toggleMenu = () => {
-        setIsMenuExpanded(!isMenuExpanded);
-    };
+    const { isMenuExpanded, isAtBottom, bottomSentinelRef, toggleMenu } = useScrollMenu();
     return (
         <div className='container-landingpage'>
             <div className='grid sm:custom-grid gap-10'>
-                <div className='p-5 lg:p-10 bg-whiteSmoke dark:bg-[#FFFFFF05] rounded-2xl flex flex-col'>
-                    <div className='mb-24'>
-                        <h6 className='fs-32 mb-2 dark:text-white'>Overview</h6>
-                        <div className='grid sm:grid-cols-1 lg:grid-cols-2 sm:gap-24'>
-                            <div className='text-sm dark:text-[#D2D3D4]'>{"Whether you're asking about sensitive health conditions, seeking legal advice, or sharing personal information to get location-based insights, privacy is essential. Traditional AI platforms often store user prompts, log identifying details, or require account creation, leaving personal details exposed to potential data breaches, tracking, or unwanted profiling."}</div>
+                <div className='bg-light dark:bg-blackRussian rounded-2xl flex flex-col'>
+
+                    <div className='dark:bg-gradient-to-b from-blackRussian3 to-blackRussian p-5 lg:p-10 mb-24 rounded-2xl'>
+                        <h6 className='fs-32 mb-4 dark:text-white'>Overview</h6>
+                        <div className='grid sm:grid-cols-1 lg:grid-cols-2 sm:gap-12'>
+                            <div className='text-sm dark:text-[#D2D3D4] mb-2'>{`Whether you're asking about sensitive health conditions, seeking legal advice, or sharing personal information to get location-based insights, privacy is essential. Traditional AI platforms often store user prompts, log identifying details, or require account creation, leaving personal details exposed to potential data breaches, tracking, or unwanted profiling.`}</div>
                             <div className='text-sm dark:text-[#D2D3D4]'>Covertly AI provides a completely anonymous and unmoderated AI chat platform, empowering users to ask deeply personal, location-specific, or health-related questions without fear of surveillance or data retention. Designed with end-to-end anonymity, auto-redaction, and stateless architecture, Covertly AI offers a safe space to engage with AI for your most sensitive queries.</div>
                         </div>
                     </div>
+
                     <div className='mb-24'>
                         <Image src={'/assets/images/use-cases/15.png'} width={1296} height={790} alt="how-it-works-banner-image" className='object-center'/>
                     </div>
-                    <div className='pb-10 sm:pb-20'>
+
+                    <div className='mb-24'>
                         <div>
-                            <h4 className='fs-32 mb-1'>Why Covertly AI is the Best Choice for Anonymous and Private Conversations</h4>
+                            <h4 className='fs-32 mb-5'>Why Covertly AI is the Best Choice for Anonymous and Private Conversations</h4>
                             <div className='grid sm:grid-cols-3 gap-6'> 
-                                <div className='p-5 lg:p-8 lg:px-6 rounded-xl bg-white dark:bg-[#FFFFFF08] flex flex-col shadow-sm' key={uuidv4()}>
-                                    <Image src={isDarkMode ? "/assets/images/use-cases/18.svg" : "/assets/images/use-cases/18a.svg"} width={96} height={96} alt="how-covertly-solves-image" className='mb-4 text-black dark:text-white'/>
-                                    <h5 className='fs-24 mb-3'>No Anonymity on Other Platforms</h5>
-                                    <ul style={{listStyle: "disc", padding: "0 0 0 20px"}}>
+                                <div className='p-5 lg:p-8 lg:px-6 rounded-xl bg-white dark:bg-[#FFFFFF08] flex flex-col' key={uuidv4()}>
+                                    <Image src={isDarkMode ? "/assets/images/use-cases/18.svg" : "/assets/images/use-cases/18a.svg"} width={96} height={96} alt="how-covertly-solves-image" className='mb-3 text-black dark:text-white'/>
+                                    <h5 className='fs-24 mb-2'>No Anonymity on Other Platforms</h5>
+                                    <ul className='list-disc ml-5'>
                                         <li className="text-black dark:text-white text-sm mb-2">Most AI platforms require login credentials or tie chats to user accounts.</li>
                                         <li className="text-black dark:text-white text-sm">Conversations are often logged and may be reviewed or stored indefinitely.</li>
                                     </ul>
                                 </div>
-                                <div className='p-5 lg:p-8 lg:px-6 rounded-xl bg-white dark:bg-[#FFFFFF08] flex flex-col shadow-sm' key={uuidv4()}>
-                                    <Image src={isDarkMode ? "/assets/images/use-cases/19.svg" : "/assets/images/use-cases/19a.svg"} width={96} height={96} alt="how-covertly-solves-image" className='mb-4 text-black dark:text-white'/>
-                                    <h5 className='fs-24 mb-3'>Risk of Data Exposure</h5>
-                                    <ul style={{listStyle: "disc", padding: "0 0 0 20px"}}>
+                                <div className='p-5 lg:p-8 lg:px-6 rounded-xl bg-white dark:bg-[#FFFFFF08] flex flex-col' key={uuidv4()}>
+                                    <Image src={isDarkMode ? "/assets/images/use-cases/19.svg" : "/assets/images/use-cases/19a.svg"} width={96} height={96} alt="how-covertly-solves-image" className='mb-3 text-black dark:text-white'/>
+                                    <h5 className='fs-24 mb-2'>Risk of Data Exposure</h5>
+                                    <ul className='list-disc ml-5'>
                                         <li className="text-black dark:text-white text-sm mb-2">Inputting personal info like names or locations leaves digital footprints.</li>
                                         <li className="text-black dark:text-white text-sm">Sensitive chats about symptoms, mental health, or personal situations can be exposed.</li>
                                     </ul>
                                 </div>
-                                <div className='p-5 lg:p-8 lg:px-6 rounded-xl bg-white dark:bg-[#FFFFFF08] flex flex-col shadow-sm' key={uuidv4()}>
-                                    <Image src={isDarkMode ? "/assets/images/use-cases/20.svg" : "/assets/images/use-cases/20a.svg"} width={96} height={96} alt="how-covertly-solves-image" className='mb-4 text-black dark:text-white'/>
-                                    <h5 className='fs-24 mb-3'>Limited Trust in AI Privacy Policies</h5>
-                                    <ul style={{listStyle: "disc", padding: "0 0 0 20px"}}>
+                                <div className='p-5 lg:p-8 lg:px-6 rounded-xl bg-white dark:bg-[#FFFFFF08] flex flex-col' key={uuidv4()}>
+                                    <Image src={isDarkMode ? "/assets/images/use-cases/20.svg" : "/assets/images/use-cases/20a.svg"} width={96} height={96} alt="how-covertly-solves-image" className='mb-3 text-black dark:text-white'/>
+                                    <h5 className='fs-24 mb-2'>Limited Trust in AI Privacy Policies</h5>
+                                    <ul className='list-disc ml-5'>
                                         <li className="text-black dark:text-white text-sm mb-2">Users don’t always know what happens to their data after the chat ends.</li>
                                         <li className="text-black dark:text-white text-sm">There is growing concern over how AI tools share or retain personal information.</li>
                                     </ul>
@@ -174,10 +140,11 @@ const PrivateConversations = () => {
                             </div>
                         </div>
                     </div>
+
                     <div className='grid sm:grid-cols-2 gap-10 mb-24'>
                         <div>
-                            <h3 className='fs-32 mb-6'>How Covertly AI Solves These Challenges</h3>
-                            <div  className='mb-6'>     
+                            <h3 className='fs-32 mb-5'>How Covertly AI Solves These Challenges</h3>
+                            <div  className='mb-3'>     
                                 <h4 className='dark:text-white fs-24 font-semibold mb-2'>True Anonymous Use No Login Required</h4>
                                 <p className='dark:text-lavender text-sm mb-2'>Covertly AI assings users an anonymous identify automatically - no email, no username, no tracking.</p>
                                 <p className='dark:text-lavender text-sm'>Conversations happen in a private, encrypted enviroment without any link to your identity.</p>
@@ -185,13 +152,13 @@ const PrivateConversations = () => {
                             <div>     
                                 <h4 className='dark:text-white fs-24 font-semibold mb-2'>Auto-Redaction of Personal Information</h4>
                                 <p className='dark:text-lavender text-sm mb-2'>Built-in redaction detects and conceals personally identificable information (PII), such as:</p>
-                                <ul className='mb-6' style={{listStyle: "disc", padding: "0 0 0 20px"}}>
+                                <ul className='list-disc ml-5 mb-3'>
                                     <li className='dark:text-lavender text-sm'>Name</li>
                                     <li className='dark:text-lavender text-sm'>Email addresses</li>
                                     <li className='dark:text-lavender text-sm'>Home or work addresses</li>
                                     <li className='dark:text-lavender text-sm'>Health-related identiflers</li>
                                 </ul>
-                                <p className='dark:text-lavender text-sm'>{'This ensures that even if you enter sensitive data (e.g., "I live at 123 Main St" or "I have chest pain when running"), it is automatically secured before processing.'}</p>
+                                <p className='dark:text-lavender text-sm'>{`This ensures that even if you enter sensitive data (e.g., "I live at 123 Main St" or "I have chest pain when running"), it is automatically secured before processing.`}</p>
                             </div>
                         </div>
                         <div>
@@ -199,72 +166,60 @@ const PrivateConversations = () => {
                         </div>
                     </div>
 
-                    <div className='pb-10 sm:pb-20'>
+                    <div className='mb-24 p-5 lg:p-12'>
                         <div>
-                            <h4 className='fs-32 mb-6'>More Reasons Users Trust Covertly AI</h4>
+                            <h4 className='fs-32 mb-5'>More Reasons Users Trust Covertly AI</h4>
                             <div className='grid sm:grid-cols-3 gap-6'> 
-                                <div className='flex flex-col shadow-sm' key={uuidv4()}>
-                                    <h5 className='fs-24 mb-5'>{"Talk Freely — Your Conversations Won't Stick Around"}</h5>
+                                <div className='flex flex-col' key={uuidv4()}>
+                                    <h5 className='fs-24 mb-3'>{`Talk Freely — Your Conversations Won't Stick Around`}</h5>
                                     <p className="text-black dark:text-white text-sm">No memory. No history. Once your session ends, all data is permanently erased, delivering a truly private, ephemeral chat experience.</p>
                                 </div>
-                                <div className='flex flex-col shadow-sm' key={uuidv4()}>
-                                    <h5 className='fs-24 mb-5'>Get Up-to-Date Answers Powered by Google Search</h5>
+                                <div className='flex flex-col' key={uuidv4()}>
+                                    <h5 className='fs-24 mb-3'>Get Up-to-Date Answers Powered by Google Search</h5>
                                     <p className="text-black dark:text-white text-sm">Get current info on local clinics, pharmacies, or services—without sacrificing privacy. Even redacted locations return accurate, anonymous results.</p>
                                 </div>
-                                <div className='flex flex-col shadow-sm' key={uuidv4()}>
-                                    <h5 className='fs-24 mb-5'>Next-Level Help: 6 AIs are Better Than 1</h5>
+                                <div className='flex flex-col' key={uuidv4()}>
+                                    <h5 className='fs-24 mb-3'>Next-Level Help: 6 AIs are Better Than 1</h5>
                                     <p className="text-black dark:text-white text-sm">Ask sensitive questions and receive diverse answers from multiple leading AI models, including GPT-4, Claude, Gemini, and LLAMA. Compare responses to find what resonates with no single-source bias.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <h3 className='fs-32 mb-2'>How Covertly AI Protects Your Anonymity?</h3>
-                    <div>
-                        <div className='grid sm:grid-cols-1 anonymity_slider mb-10' style={{borderRight: "2px solid #30C5D2", borderLeft: "2px solid #30C5D2", userSelect: 'none'}}>
-                            <Swiper
-                                modules={[Pagination]}
-                                spaceBetween={20}
-                                slidesPerView={"auto"}
-                                grabCursor
-                                freeMode
-                                pagination={{ clickable: true }}
-                                className='pb-6'
-                                breakpoints={{
-                                    640: { slidesPerView: "auto", spaceBetween: 20 },
-                                    1024: { slidesPerView: "auto", spaceBetween: 20 },
-                                    1280: { slidesPerView: "auto", spaceBetween: 20 }
-                                }}
-                            >
-                                {data.map((item) => (
-                                    <SwiperSlide key={uuidv4()}>
-                                        <div className='lg:items-center border border-[#FFFFFF05] rounded-[16px] p-4 h-full'>
-                                            <span className='fs-64 text-[#30C5D2]'>{item.no}</span>
-                                            <div className='relative h-[150px]'>
-                                                <p className='dark:text-white fs-24 font-semibold mb-2'>{item.title}</p>
-                                                <span className='dark:text-lavender text-sm'>{item.desc}</span>
-                                                <Image src={'/assets/images/use-cases/arrow-right.png'} alt="Arrow Right" width={18} height={18} className='absolute right-0 bottom-0' draggable={false} />
-                                            </div>
+                    
+                    <h3 className='fs-32 mb-5'>How Covertly AI Protects Your Anonymity?</h3>
+                    <div className='grid sm:grid-cols-1 anonymity_slider mb-24' style={{borderRight: "2px solid #30C5D2", borderLeft: "2px solid #30C5D2", userSelect: 'none'}}>
+                        <Swiper
+                            modules={[Pagination]}
+                            spaceBetween={20}
+                            slidesPerView={"auto"}
+                            grabCursor
+                            freeMode
+                            pagination={{ clickable: true }}
+                            className='pb-6'
+                            breakpoints={{
+                                640: { slidesPerView: "auto", spaceBetween: 20 },
+                                1024: { slidesPerView: "auto", spaceBetween: 20 },
+                                1280: { slidesPerView: "auto", spaceBetween: 20 }
+                            }}
+                        >
+                            {data.map((item) => (
+                                <SwiperSlide key={uuidv4()}>
+                                    <div className='lg:items-center rounded-[16px] p-4 h-full'>
+                                        <span className='fs-64 text-[#30C5D2]'>{item.no}</span>
+                                        <div className='relative h-[150px]'>
+                                            <p className='dark:text-white fs-24 font-semibold mb-2'>{item.title}</p>
+                                            <span className='dark:text-lavender text-sm'>{item.desc}</span>
+                                            <Image src={'/assets/images/use-cases/arrow-right.png'} alt="Arrow Right" width={18} height={18} className='absolute right-0 bottom-0' draggable={false} />
                                         </div>
-                                    </SwiperSlide>
-                                ))}
-                            </Swiper>
-                        </div>
-                    </div>
-                    <h3 className='fs-32 mb-2'>Why Covertly AI is the Best Choice for Anonymous and Private Conversations</h3>
-                    <p className='fs-16 mb-2'>Designed for Privacy. Built for Freedom:</p>
-                    <div className='grid sm:grid-cols-2 gap-6 mb-24'> 
-                        {
-                            title.map((item,i)=>(
-                                <div key={uuidv4()} className='flex lg:flex-row gap-2 md:gap-4 lg:gap-2 lg:items-center border border-[#FFFFFF05] rounded-[16px]'>
-                                    <Image src={isDarkMode ? item.img : item.img1} alt={item.img} width={72} height={72} className='mb-2' />
-                                    <div>
-                                        <p className='dark:text-white fs-24 font-semibold mb-2'>{item.title}</p>
-                                        <span className='dark:text-lavender text-sm'>{item.desc}</span>
                                     </div>
-                                </div>
-                            ))
-                        }
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
                     </div>
+
+                    <h3 className='fs-32 mb-5'>Why Covertly AI is the Best Choice for Anonymous and Private Conversations</h3>
+                    <p className='dark:text-white fs-16 mb-4'>Designed for Privacy. Built for Freedom:</p>
+                    <TitleGrid title={title} isDarkMode={isDarkMode} />
                     <div>
                         <h3 className='fs-32 mb-5'>Covertly AI is more than a chatbot, it’s a secure environment for handling sensitive questions and private data. </h3>
                         <p className='fs-16 mb-2'>Whether addressing health concerns, legal matters, or personal challenges, users can engage with confidence, knowing their identity is protected and their session leaves no trace. In a landscape where privacy is often compromised, Covertly AI ensures it remains non-negotiable.</p>
@@ -273,116 +228,13 @@ const PrivateConversations = () => {
                     </div>
                 </div>
 
-                <div className='hidden md:block rounded-2xl flex flex-col'>
-                    <div className='use-cases-profile' style={{ backgroundImage: 'url(/assets/images/use-cases/bg1.png)'}} >
-                        <div style={{display: "flex", alignItems: "end", gap: "15px"}}>
-                            <Image src={"/assets/images/use-cases/13.png"} alt="wolf" width={100} height={100} />
-                            <Image src={"/assets/images/use-cases/linkedin-blue.png"} alt="Linkedin-Blue" width={30} height={30} />
-                        </div>
-                        <p className='dark:text-white fs-24 font-semibold'>Tamás Hám-Szabó</p>
-                        <p className='dark:text-lavender text-sm fs-16 mb-2'>Founder of SAAS First - the Best AI and Data-Driven Customer Engagement Tool</p>
-                        <hr />
-                        <p className='dark:text-lavender text-sm fs-16 mt-2'>{"With 11 years in SaaS, I've built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let's connect if you share the same drive for success!"}</p>
-                    </div>
-                    <div className='use-cases-profile' style={{ backgroundImage: 'url(/assets/images/use-cases/bg2.png)'}} >
-                        <p className='dark:text-lavender text-sm fs-16 mb-2'>Share with your community!</p>
-                        <div style={{display: "flex", alignItems: "end", gap: "15px"}}>
-                            <Image src={"/assets/images/use-cases/facebook.png"} alt="facebook" width={30} height={30} />
-                            <Image src={"/assets/images/use-cases/twitter.png"} alt="twitter" width={30} height={30} />
-                            <Image src={"/assets/images/use-cases/linkedin.png"} alt="linkedin" width={30} height={30} />
-                        </div>
-                    </div>
-                    <div className='bg-white dark:bg-[#FFFFFF08] rounded-2xl mb-24'>
-                        <h4 className='fs-24 font-bold dark:text-white mb-3 p-3'>See More Use Cases</h4>
-                        <ul className='mb-5'>
-                            <li className='see-more-use-cases fs-16 dark:text-white mb-5'>Financial Analysis</li>
-                            <li className='see-more-use-cases fs-16 dark:text-white mb-5'>Anonymous and Private Conversations </li>
-                            <li className='see-more-use-cases fs-16 dark:text-white mb-5'>Multi-Modality (Healthcare)</li>
-                            <li className='see-more-use-cases fs-16 dark:text-white mb-5'>Responsive</li>
-                            <li className='see-more-use-cases fs-16 dark:text-white mb-5'>Elijah</li>
-                            <li className='see-more-use-cases fs-16 dark:text-white mb-5'>Financial Executives</li>
-                            <li className='see-more-use-cases fs-16 dark:text-white mb-5'>Multi-LLM Querying</li>        
-                        </ul>
-                    </div>
-                </div>
+                <Sidebar />
 
-                <div className={`md:hidden fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
-                    isAtBottom ? 'relative' : 'fixed'
-                }`}>
-                    <div 
-                        className={`bg-gradient-to-r from-[#30C5D2] to-[#471069] h-16 flex items-center justify-center cursor-pointer transition-all duration-300 ${
-                            isMenuExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                        }`}
-                        onClick={toggleMenu}
-                    >
-                        <div className="flex items-center gap-2 text-white">
-                            <span className="text-sm font-medium">Menu</span>
-                            <svg 
-                                className="w-5 h-5 transition-transform duration-300 rotate-180" 
-                                fill="none" 
-                                stroke="currentColor" 
-                                viewBox="0 0 24 24"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div className={`bg-gradient-to-r from-[#30C5D2] to-[#471069] transition-all duration-300 ease-in-out ${
-                        isMenuExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
-                    }`}>
-                        <div className="h-80 bg-white dark:bg-[#FFFFFF08] rounded-t-2xl p-4 overflow-y-auto">
-                            <div className='use-cases-profile mb-4' style={{ backgroundImage: 'url(/assets/images/use-cases/bg1.png)'}} >
-                                <div style={{display: "flex", alignItems: "end", gap: "15px"}}>
-                                    <Image src={"/assets/images/use-cases/13.png"} alt="wolf" width={80} height={80} />
-                                    <Image src={"/assets/images/use-cases/linkedin-blue.png"} alt="Linkedin-Blue" width={24} height={24} />
-                                </div>
-                                <p className='dark:text-white fs-20 font-semibold'>Tamás Hám-Szabó</p>
-                                <p className='dark:text-lavender text-xs fs-14 mb-2'>Founder of SAAS First - the Best AI and Data-Driven Customer Engagement Tool</p>
-                                <hr />
-                                <p className='dark:text-lavender text-xs fs-14 mt-2'>{"With 11 years in SaaS, I've built MillionVerifier and SAAS First. Passionate about SaaS, data, and AI. Let's connect if you share the same drive for success!"}</p>
-                            </div>
-
-                            <div className='use-cases-profile mb-4' style={{ backgroundImage: 'url(/assets/images/use-cases/bg2.png)'}} >
-                                <p className='dark:text-lavender text-xs fs-14 mb-2'>Share with your community!</p>
-                                <div style={{display: "flex", alignItems: "end", gap: "15px"}}>
-                                    <Image src={"/assets/images/use-cases/facebook.png"} alt="facebook" width={24} height={24} />
-                                    <Image src={"/assets/images/use-cases/twitter.png"} alt="twitter" width={24} height={24} />
-                                    <Image src={"/assets/images/use-cases/linkedin.png"} alt="linkedin" width={24} height={24} />
-                                </div>
-                            </div>
-                            <div className='bg-white dark:bg-[#FFFFFF08] rounded-xl'>
-                                <h4 className='fs-20 font-bold dark:text-white mb-3 p-3'>See More Use Cases</h4>
-                                <ul className='mb-5'>
-                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Financial Analysis</li>
-                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Anonymous and Private Conversations </li>
-                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Multi-Modality (Healthcare)</li>
-                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Responsive</li>
-                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Elijah</li>
-                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Financial Executives</li>
-                                    <li className='see-more-use-cases fs-14 dark:text-white mb-3'>Multi-LLM Querying</li>        
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div 
-                            className="bg-gradient-to-r from-[#30C5D2] to-[#471069] h-12 flex items-center justify-center cursor-pointer"
-                            onClick={toggleMenu}
-                        >
-                            <div className="flex items-center gap-2 text-white">
-                                <span className="text-sm font-medium">Close</span>
-                                <svg 
-                                    className="w-5 h-5 transition-transform duration-300" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <MobileMenu 
+                    isMenuExpanded={isMenuExpanded}
+                    isAtBottom={isAtBottom}
+                    toggleMenu={toggleMenu}
+                />
                 <div ref={bottomSentinelRef} style={{ height: 1 }} />
             </div>
         </div>
